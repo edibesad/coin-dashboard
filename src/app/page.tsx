@@ -2,17 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { CoinData } from "@/types/coin-data";
 import { useEffect, useState } from "react";
+import { CoinsTable } from "./components/CoinsTable";
+import { Input } from "@/components/ui/input";
 
 export default function Home() {
   const [coins, setCoins] = useState<CoinData[]>([]);
@@ -20,68 +13,38 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`/api/coins?limit=10&&offset=${page * 10}`)
-      .then(async (response) => setCoins(await response.json()))
+    fetchCoins(page)
+      .then(async (response) => {
+        const json = await response.json();
+        setCoins(json.data);
+      })
       .finally(() => setLoading(false));
   }, [page]);
+
   return (
     <div className="container mx-auto">
       <div className="w-full h-screen flex items-center justify-center">
         <Card className="w-full">
           <CardHeader>
-            <h2 className="text-xl font-semibold">Top Cryptocurrencies</h2>
+            <div className="flex justify-between">
+              <h2 className="text-xl font-semibold">Top Cryptocurrencies</h2>
+              <Input
+                placeholder="Symbol"
+                className="w-64"
+                onSubmit={(value) => {
+                  setLoading(true);
+                  fetchCoins(page)
+                    .then(async (response) => {
+                      const json = await response.json();
+                      setCoins(json.data);
+                    })
+                    .finally(() => setLoading(false));
+                }}
+              />
+            </div>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Change</TableHead>
-                  <TableHead>24h Volume</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {loading &&
-                  Array.from({ length: 10 }).map((_, index) => (
-                    <TableRow key={index}>
-                      <TableCell>
-                        <Skeleton className="h-4 w-1/2" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4 w-1/2" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4 w-1/2" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4 w-1/2" />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                {!loading &&
-                  coins.map((coin) => (
-                    <TableRow
-                      className="cursor-pointer"
-                      key={coin.symbol}
-                      onClick={() => {
-                        window.location.href = `/detail/${coin.symbol}`;
-                      }}
-                    >
-                      <TableCell>{coin.symbol}</TableCell>
-                      <TableCell>
-                        {parseFloat(coin.lastPrice).toFixed(2)}
-                      </TableCell>
-                      <TableCell>
-                        {parseFloat(coin.priceChange).toFixed(2)}
-                      </TableCell>
-                      <TableCell>
-                        {parseFloat(coin.volume).toFixed(2)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
+            <CoinsTable coins={coins} loading={loading} />
           </CardContent>
           <div className="flex justify-between p-4">
             <div></div>
@@ -112,4 +75,9 @@ export default function Home() {
       </div>
     </div>
   );
+}
+
+async function fetchCoins(page: number) {
+  const response = await fetch(`/api/coins?limit=10&offset=${page * 10}`);
+  return response;
 }
