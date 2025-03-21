@@ -21,6 +21,7 @@ export async function GET(request: Request) {
       volume: symbol.volume,
       lastPrice: symbol.lastPrice,
     }));
+
   console.log("symbols", symbols);
 
   return new Response(

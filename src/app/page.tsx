@@ -6,20 +6,27 @@ import { CoinData } from "@/types/coin-data";
 import { useEffect, useState } from "react";
 import { CoinsTable } from "./components/CoinsTable";
 import { Input } from "@/components/ui/input";
+import { useDebounce } from "./hooks/hooks";
 
 export default function Home() {
   const [coins, setCoins] = useState<CoinData[]>([]);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [total, setTotal] = useState(0);
+
+  const debouncedSearch = useDebounce(search, 500);
 
   useEffect(() => {
-    fetchCoins(page)
+    setLoading(true);
+    fetchCoins(page, debouncedSearch)
       .then(async (response) => {
         const json = await response.json();
         setCoins(json.data);
+        setTotal(json.total);
       })
       .finally(() => setLoading(false));
-  }, [page]);
+  }, [debouncedSearch, page]);
 
   return (
     <div className="container mx-auto">
@@ -31,15 +38,11 @@ export default function Home() {
               <Input
                 placeholder="Symbol"
                 className="w-64"
-                onSubmit={(value) => {
-                  setLoading(true);
-                  fetchCoins(page)
-                    .then(async (response) => {
-                      const json = await response.json();
-                      setCoins(json.data);
-                    })
-                    .finally(() => setLoading(false));
+                onChange={(e) => {
+                  setPage(0);
+                  return setSearch(e.target.value);
                 }}
+                value={search}
               />
             </div>
           </CardHeader>
@@ -51,21 +54,15 @@ export default function Home() {
             <div className="flex gap-4">
               <Button
                 className="cursor-pointer"
-                onClick={() => {
-                  setLoading(true);
-                  setPage(page - 1);
-                }}
-                disabled={page === 0}
+                onClick={() => setPage(page - 1)}
+                disabled={page === 0 || loading}
               >
                 Previous
               </Button>
               <Button
                 className="cursor-pointer"
-                onClick={() => {
-                  setLoading(true);
-                  setPage(page + 1);
-                }}
-                disabled={page * 10 >= 560}
+                onClick={() => setPage(page + 1)}
+                disabled={page * 10 > total || loading}
               >
                 Next
               </Button>
@@ -77,7 +74,13 @@ export default function Home() {
   );
 }
 
-async function fetchCoins(page: number) {
-  const response = await fetch(`/api/coins?limit=10&offset=${page * 10}`);
+async function fetchCoins(page: number, search?: string) {
+  const query = new URLSearchParams({
+    limit: "10",
+    offset: (page * 10).toString(),
+    ...(search ? { search } : {}),
+  });
+
+  const response = await fetch(`/api/coins?${query.toString()}`);
   return response;
 }
