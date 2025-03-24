@@ -8,11 +8,13 @@ export async function GET(request: Request) {
   ).json();
   console.log("search", search);
 
-  const symbols = data
+  let filteredData = data
     .filter((symbol: any) =>
       search ? symbol.symbol.includes(search.toUpperCase()) : true
     )
-    .filter((symbol: any) => symbol.symbol.endsWith("USDT"))
+    .filter((symbol: any) => symbol.symbol.endsWith("USDT"));
+
+  const symbols = filteredData
     .slice(Number(offset), Number(offset) + Number(limit))
     .map((symbol: any) => ({
       symbol: symbol.symbol,
@@ -27,11 +29,7 @@ export async function GET(request: Request) {
   return new Response(
     JSON.stringify({
       data: symbols,
-      total: data
-        .filter((symbol: any) => symbol.symbol.endsWith("USDT"))
-        .filter((symbol: any) =>
-          search ? symbol.symbol.includes(search.toUpperCase()) : true
-        ).length,
+      total: filteredData.length,
     }),
     {
       headers: {
