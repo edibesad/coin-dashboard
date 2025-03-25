@@ -35,8 +35,6 @@ export async function GET(request: Request) {
         })
       );
 
-    console.log("symbols", symbols);
-
     return new Response(
       JSON.stringify({
         data: symbols,
