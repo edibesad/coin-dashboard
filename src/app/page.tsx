@@ -37,7 +37,7 @@ export default function Home() {
               <h2 className="text-xl font-semibold">Top Cryptocurrencies</h2>
               <Input
                 placeholder="Symbol"
-                className="w-64"
+                className="w-1/3"
                 onChange={(e) => {
                   setPage(0);
                   return setSearch(e.target.value);
