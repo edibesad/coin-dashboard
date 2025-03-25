@@ -10,6 +10,21 @@ export async function GET(request: Request) {
       await fetch("https://api.binance.com/api/v3/ticker/24hr")
     ).json();
     console.log("search", search);
+    console.log("data", data);
+
+    if (data) {
+      return new Response(
+        JSON.stringify({
+          data: [],
+          total: 0,
+        }),
+        {
+          headers: {
+            "content-type": "application/json",
+          },
+        }
+      );
+    }
 
     const filteredData = data
       .filter((symbol: SymbolData) =>
