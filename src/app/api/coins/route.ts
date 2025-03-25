@@ -1,3 +1,5 @@
+import { SymbolData } from "@/app/types/symobl-data";
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const limit = searchParams.get("limit");
@@ -9,20 +11,28 @@ export async function GET(request: Request) {
   console.log("search", search);
 
   const filteredData = data
-    .filter((symbol: any) =>
+    .filter((symbol: SymbolData) =>
       search ? symbol.symbol.includes(search.toUpperCase()) : true
     )
-    .filter((symbol: any) => symbol.symbol.endsWith("USDT"));
+    .filter((symbol: SymbolData) => symbol.symbol.endsWith("USDT"));
 
   const symbols = filteredData
     .slice(Number(offset), Number(offset) + Number(limit))
-    .map((symbol: any) => ({
-      symbol: symbol.symbol,
-      priceChange: symbol.priceChange,
-      priceChangePercent: symbol.priceChangePercent,
-      volume: symbol.volume,
-      lastPrice: symbol.lastPrice,
-    }));
+    .map(
+      (symbol: {
+        symbol: string;
+        priceChange: string;
+        priceChangePercent: string;
+        volume: string;
+        lastPrice: string;
+      }) => ({
+        symbol: symbol.symbol,
+        priceChange: symbol.priceChange,
+        priceChangePercent: symbol.priceChangePercent,
+        volume: symbol.volume,
+        lastPrice: symbol.lastPrice,
+      })
+    );
 
   console.log("symbols", symbols);
 

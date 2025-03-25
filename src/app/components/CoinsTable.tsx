@@ -7,12 +7,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { SymbolData } from "../types/symobl-data";
 
 export function CoinsTable({
   coins,
   loading,
 }: {
-  coins: any[];
+  coins: SymbolData[];
   loading: boolean;
 }) {
   return (
