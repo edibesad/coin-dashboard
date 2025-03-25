@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     console.log("search", search);
     console.log("data", data);
 
-    if (data) {
+    if (!data) {
       return new Response(
         JSON.stringify({
           data: [],
