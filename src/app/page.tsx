@@ -62,7 +62,7 @@ export default function Home() {
               <Button
                 className="cursor-pointer"
                 onClick={() => setPage(page + 1)}
-                disabled={page * 10 > total || loading}
+                disabled={(page + 1) * 10 >= total || loading}
               >
                 Next
               </Button>

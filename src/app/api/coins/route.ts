@@ -8,7 +8,7 @@ export async function GET(request: Request) {
   ).json();
   console.log("search", search);
 
-  let filteredData = data
+  const filteredData = data
     .filter((symbol: any) =>
       search ? symbol.symbol.includes(search.toUpperCase()) : true
     )
