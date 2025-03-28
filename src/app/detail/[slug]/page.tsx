@@ -8,8 +8,10 @@ export default async function Detail({
   const { slug } = await params;
 
   return (
-    <div className="container mx-auto flex justify-center items-center h-screen">
-      <DetailsCard symbol={slug} />
-    </div>
+    <main className="min-h-screen bg-background py-12">
+      <div className="container mx-auto px-4">
+        <DetailsCard symbol={slug} />
+      </div>
+    </main>
   );
 }

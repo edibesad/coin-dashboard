@@ -1,6 +1,5 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import {
   ArrowDown,
   ArrowUp,
@@ -37,7 +36,7 @@ export const MarketDataCard = ({ data }: MarketDataProps) => {
   }, [data?.lastPrice]);
 
   return (
-    <Card className="h-full w-full">
+    <Card className="h-full w-full bg-card/50 backdrop-blur-sm">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>Market Data</span>
@@ -48,21 +47,25 @@ export const MarketDataCard = ({ data }: MarketDataProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="h-full">
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-2 gap-6">
           {/* Price Section */}
           <div className="space-y-2">
             <div className="text-sm text-muted-foreground">Last Price</div>
             <div className="flex items-center gap-2">
               <span
-                className={`text-2xl font-bold transition-all duration-300 ${
+                className={`text-2xl font-bold font-mono transition-all duration-300 ${
                   animate ? "scale-110 opacity-70" : "scale-100 opacity-100"
                 }`}
               >
-                {parseFloat(data?.lastPrice || "0").toFixed(2)}
+                $
+                {parseFloat(data?.lastPrice || "0").toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
               </span>
               <span
                 className={`flex items-center transition-colors duration-300 ${
-                  isPositive ? "text-green-500" : "text-red-500"
+                  isPositive ? "text-emerald-500" : "text-rose-500"
                 }`}
               >
                 {isPositive ? (
@@ -80,15 +83,15 @@ export const MarketDataCard = ({ data }: MarketDataProps) => {
             <div className="flex items-center gap-2">
               <span
                 className={`text-2xl font-bold transition-colors duration-300 ${
-                  isPositive ? "text-green-500" : "text-red-500"
+                  isPositive ? "text-emerald-500" : "text-rose-500"
                 } ${animate ? "scale-105" : "scale-100"}`}
               >
                 {parseFloat(data?.priceChangePercent || "0").toFixed(2)}%
               </span>
               {isPositive ? (
-                <ArrowUp className="h-4 w-4 text-green-500 transition-transform duration-300 hover:translate-y-[-2px]" />
+                <ArrowUp className="h-4 w-4 text-emerald-500 transition-transform duration-300 hover:translate-y-[-2px]" />
               ) : (
-                <ArrowDown className="h-4 w-4 text-red-500 transition-transform duration-300 hover:translate-y-[2px]" />
+                <ArrowDown className="h-4 w-4 text-rose-500 transition-transform duration-300 hover:translate-y-[2px]" />
               )}
             </div>
           </div>
@@ -97,7 +100,7 @@ export const MarketDataCard = ({ data }: MarketDataProps) => {
           <div className="space-y-2">
             <div className="text-sm text-muted-foreground">24h Volume</div>
             <div
-              className={`text-2xl font-bold transition-all duration-300 ${
+              className={`text-2xl font-bold font-mono transition-all duration-300 ${
                 animate ? "scale-105 opacity-70" : "scale-100 opacity-100"
               }`}
             >
@@ -106,28 +109,22 @@ export const MarketDataCard = ({ data }: MarketDataProps) => {
           </div>
 
           {/* High/Low Section */}
-          <div className="col-span-2 md:col-span-3">
-            <Separator className="my-4" />
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <div className="text-sm text-muted-foreground">24h High</div>
-                <div
-                  className={`text-lg font-semibold text-green-500 transition-all duration-300 ${
-                    animate ? "translate-y-[-2px]" : "translate-y-0"
-                  }`}
-                >
-                  {parseFloat(data?.highPrice || "0").toFixed(2)}
-                </div>
+          <div className="space-y-2">
+            <div className="text-sm text-muted-foreground">24h Range</div>
+            <div className="space-y-1">
+              <div className="text-lg font-semibold text-emerald-500 font-mono">
+                H: $
+                {parseFloat(data?.highPrice || "0").toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
               </div>
-              <div>
-                <div className="text-sm text-muted-foreground">24h Low</div>
-                <div
-                  className={`text-lg font-semibold text-red-500 transition-all duration-300 ${
-                    animate ? "translate-y-[2px]" : "translate-y-0"
-                  }`}
-                >
-                  {parseFloat(data?.lowPrice || "0").toFixed(2)}
-                </div>
+              <div className="text-lg font-semibold text-rose-500 font-mono">
+                L: $
+                {parseFloat(data?.lowPrice || "0").toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
               </div>
             </div>
           </div>
